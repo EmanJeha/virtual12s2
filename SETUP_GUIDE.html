@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Setup Guide · Binary Search Games</title>
+<style>
+  :root { --ink: #1B1F3B; --soft: #5A6188; --sky: #EEF3FF; --line: #DADFF5; --purple: #7B5CFF; --pink: #FF5C8A; --teal: #10C6B4; --blue: #2F80FF; --orange: #FF8A3D; --gold: #FFB627; }
+  body { margin: 0; background: var(--sky); color: var(--ink); font: 17px/1.6 'Segoe UI', system-ui, -apple-system, sans-serif; }
+  main { max-width: 860px; margin: 0 auto; padding-inline: 18px; padding-block: 32px 60px; }
+  h1 { font-size: 38px; line-height: 1.1; margin: 0 0 6px; }
+  h2 { font-size: 24px; margin: 0 0 10px; display: flex; gap: 12px; align-items: center; }
+  h2 b { width: 40px; height: 40px; border-radius: 12px; color: #fff; display: grid; place-items: center; font-size: 20px; flex: none; }
+  section { background: #fff; border-radius: 20px; padding: 22px 24px; margin-top: 18px; box-shadow: 0 5px 0 var(--line); position: relative; overflow: hidden; }
+  section::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: linear-gradient(90deg, #FF5C8A, #FF8A3D, #FFB627, #10C6B4, #2F80FF, #7B5CFF); }
+  section:nth-of-type(1) h2 b { background: var(--pink); } section:nth-of-type(2) h2 b { background: var(--orange); } section:nth-of-type(3) h2 b { background: var(--teal); } section:nth-of-type(4) h2 b { background: var(--blue); } section:nth-of-type(5) h2 b { background: var(--purple); }
+  ol, ul { margin: 0; padding-left: 22px; } li { margin: 6px 0; }
+  code { font-family: Consolas, 'Courier New', monospace; background: var(--sky); padding: 1px 6px; border-radius: 6px; font-size: .92em; word-break: break-all; }
+  .note { background: #FFF6D9; border-radius: 14px; padding: 12px 14px; margin-top: 12px; font-size: 15.5px; }
+  .new { background: linear-gradient(90deg, #EAE4FF, #DDF7F3); border-radius: 14px; padding: 12px 16px; margin-top: 14px; }
+  .lede { color: var(--soft); margin: 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 15.5px; } td { padding: 8px; border-top: 1px solid var(--line); vertical-align: top; } td:first-child { font-weight: 700; white-space: nowrap; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Binary Search Games: setup guide</h1>
+  <p class="lede">Grade 12 · Unit 4 · Week 9 · Session 2 · Virtual (35 min) · Slides 13–24. Two live games, <b>Higher or Lower!</b> (warm-up) and <b>Split Showdown</b> (wrap-up), plus the <b>Binary Lab</b> to demo the search step by step.</p>
+  <p class="note"><b>Firebase is already set up</b> from Session 1, and <code>config.js</code> is already filled in. Just do step 1: create a new repository called <code>virtual12s2</code> and upload these files. Scores for Session 2 are kept separate from Session 1.</p>
+
+  <div class="new"><b>New this session</b>
+    <ul>
+      <li><b>Higher-or-lower number game</b> inside the warm-up (each student device picks its own secret number).</li>
+      <li><b>Tap-the-middle challenges</b>: students run a real Binary Search with their finger; the game drops the unused half.</li>
+      <li><b>🔥 Streak bonus</b> for 3+ right in a row, shown on phones and on your board.</li>
+      <li><b>3-2-1-GO countdown</b> on every screen when you press Start.</li>
+      <li><b>Live moves feed</b> and <b>class accuracy bar</b> on your board, plus a dot strip per player (green = right, red = wrong).</li>
+      <li><b>Auto-results</b>: when every player finishes, the board switches to the podium by itself.</li>
+      <li><b>Auto-next</b>: after each answer the next question opens by itself after 10 s (students can press <i>Stay here</i>).</li>
+    </ul>
+  </div>
+
+  <section>
+    <h2><b>1</b>Put the games on GitHub Pages</h2>
+    <ol>
+      <li>On <code>github.com</code> click <b>New repository</b>. Name it exactly <code>virtual12s2</code>, set it to <b>Public</b>, and create it.</li>
+      <li>Click <b>uploading an existing file</b>. Drag in <b>all the files from this folder</b> (not the folder itself). Click <b>Commit changes</b>.</li>
+      <li>Open <b>Settings → Pages</b>. Under <b>Build and deployment</b> choose <b>Deploy from a branch</b>, branch <b>main</b>, folder <b>/ (root)</b>, and click <b>Save</b>.</li>
+      <li>Wait 1–2 minutes and refresh. The games are now at <code>https://emanjeha.github.io/virtual12s2/</code></li>
+      <li>If you use a different repository name, open <code>config.js</code> and change <code>SITE_URL</code> to match.</li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><b>2</b>Suggested 35-minute flow</h2>
+    <table>
+      <tr><td>0–5 min</td><td><b>Warm-up game</b> (slides 14–15). Open <code>board.html?game=warmup</code>, students scan and join, press <b>Start</b>.</td></tr>
+      <tr><td>5–10 min</td><td>Reveal the topic and mission (slide 16). Play the <b>3D video</b>, or use it as homework review.</td></tr>
+      <tr><td>10–20 min</td><td>Learn (slides 17–20). Share <code>lab.html</code>: press <b>Step</b> to trace key 8 together, then try 50 (not found) and the names list.</td></tr>
+      <tr><td>20–27 min</td><td>We do + You do (slides 21–23). Students trace “Sara” and “Zaid”; they can check themselves in the Lab.</td></tr>
+      <tr><td>27–35 min</td><td><b>Wrap-up game</b> + exit ticket (slide 24). Press <b>Switch to Split Showdown</b>, Start, then <b>Show answers</b> for the exit tickets.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2><b>3</b>Run it in class</h2>
+    <table>
+      <tr><td>Shared screen</td><td>Open <code>https://emanjeha.github.io/virtual12s2/board.html?game=warmup</code> and press <b>Full screen</b>, then share that tab in your online meeting. The QR code and join link appear on the left.</td></tr>
+      <tr><td>Students</td><td>One device each (or one per breakout pair). They scan the QR code or open the link, type their name and press <b>Join</b>.</td></tr>
+      <tr><td>Start</td><td>Press <b>Start game</b>. Everyone sees 3-2-1-GO, then the questions. The board re-ranks live and shows each move in the <b>Live moves</b> feed.</td></tr>
+      <tr><td>End</td><td>Results open by themselves when everyone finishes. Or press <b>End game</b> to stop and show the podium and the hardest questions.</td></tr>
+      <tr><td>Wrap-up</td><td>Press <b>Switch to Split Showdown</b>. After it ends, press <b>Show answers</b> to read every exit ticket.</td></tr>
+      <tr><td>Binary Lab</td><td><code>https://emanjeha.github.io/virtual12s2/lab.html</code>. <b>Step</b> (or the → key) walks through one action at a time with the Python line highlighted. <b>I’ll guess your number</b> lets the computer find a student’s secret number by halving.</td></tr>
+      <tr><td>Next class</td><td>Press <b>New round</b> (click twice). This clears the board for a fresh group.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2><b>4</b>Good to know</h2>
+    <ul>
+      <li><b>Practice mode:</b> without internet access to Firebase, students can still play, but nothing appears on the board.</li>
+      <li><b>Refreshing is safe:</b> if a page reloads, the student continues where they were (even mid-number-game).</li>
+      <li><b>Late players</b> can join at any time while the game is live.</li>
+      <li><b>Scoring:</b> 100 points per correct answer, up to 50 for speed, and a streak bonus (+20, +40, +60) from the 3rd right answer in a row. In the warm-up, cracking the mystery topic is worth +200.</li>
+      <li><b>Keyboard:</b> on a laptop, students can answer multiple-choice with keys 1–4 or A–D and press Enter for the next question.</li>
+      <li><b>Changing questions:</b> edit <code>questions.js</code> in GitHub (pencil icon) and commit. The top of that file explains each question type.</li>
+      <li><b>Who can control the board:</b> anyone who opens <code>board.html</code> can press Start or End, so don't share that link with students.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><b>5</b>If you ever need a new Firebase</h2>
+    <ol>
+      <li>Go to <code>console.firebase.google.com</code>, create a project, then <b>Build → Realtime Database → Create Database</b> (location <code>europe-west1</code>), test mode.</li>
+      <li>In <b>Rules</b>, paste <code>{"rules":{"sessions":{".read":true,".write":true}}}</code> and click <b>Publish</b>.</li>
+      <li>In <b>Project settings → Your apps → &lt;/&gt;</b>, register a web app and copy the values into <code>config.js</code>.</li>
+    </ol>
+  </section>
+</main>
+</body>
+</html>

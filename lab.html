@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Binary Lab · Grade 12 Session 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+  .lab { max-width: 1280px; margin: 0 auto; padding: 14px 16px 30px; display: grid; gap: 14px; position: relative; z-index: 2; }
+  .lhead { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .lhead h1 { font-size: clamp(32px, 4vw, 52px); flex: 1; }
+  .tabs { display: flex; gap: 8px; background: rgba(255,255,255,.8); padding: 6px; border-radius: 16px; box-shadow: 0 4px 0 var(--line); }
+  .tabs button { border: 0; background: transparent; padding: 10px 16px; border-radius: 12px; font: 800 17px/1 var(--f-display); color: var(--soft); }
+  .tabs button.on { background: linear-gradient(135deg, #8A6BFF, #5B3FF0); color: #fff; }
+  .panel2 { background: rgba(255,255,255,.9); border-radius: 26px; padding: clamp(14px, 2.4vw, 24px); box-shadow: 0 8px 0 var(--line); display: grid; gap: 14px; position: relative; }
+  .panel2::before { content: ''; position: absolute; left: 22px; right: 22px; top: 0; height: 6px; border-radius: 0 0 8px 8px; background: var(--grad); }
+  .ctrls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .ctrls label { font: 800 13px/1 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+  .ctrls select, .ctrls input[type=text] { border: 3px solid var(--line); border-radius: 12px; padding: 9px 12px; font: 800 18px/1 var(--f-display); background: #fff; min-width: 0; }
+  .ctrls input[type=text] { width: 140px; }
+  .ctrls input#custom { width: min(420px, 100%); font: 700 15px/1.2 var(--f-code); }
+  .ctrls input[type=range] { accent-color: var(--purple); width: 120px; }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 14px; align-items: start; }
+  .stage .arr { padding-top: 34px; min-height: 140px; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
+  .stats div { background: var(--sky); border-radius: 14px; padding: 10px; text-align: center; }
+  .stats small { display: block; font: 800 11px/1.2 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); }
+  .stats b { font: 800 30px/1.1 var(--f-display); font-variant-numeric: tabular-nums; }
+  .stats .vs b { color: var(--pink); }
+  .say { font: 800 clamp(18px, 2.2vw, 24px)/1.3 var(--f-display); padding: 12px 16px; border-radius: 16px; background: #F4F1FF; min-height: 56px; }
+  .say.win { background: linear-gradient(135deg, #E2FBF1, #EAF6FF); color: #08724F; } .say.lose { background: #FFF1E3; color: #A44A00; }
+  .code .cl.now { background: #FFF3C4; outline: 3px solid var(--gold); }
+  .trace { width: 100%; border-collapse: separate; border-spacing: 0 5px; font: 700 15px/1.2 var(--f-code); }
+  .trace th { font: 800 11px/1 var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--soft); text-align: left; padding: 0 8px; }
+  .trace td { background: var(--sky); padding: 8px; } .trace td:first-child { border-radius: 10px 0 0 10px; } .trace td:last-child { border-radius: 0 10px 10px 0; }
+  .trace tr.hit td { background: #E2FBF1; } .trace tr.newrow td { animation: slidein .4s; }
+  .shrink { display: flex; gap: 6px; align-items: end; height: 70px; }
+  .shrink i { flex: 1; border-radius: 8px 8px 4px 4px; background: var(--grad); display: grid; place-items: start center; color: #fff; font: 800 13px/1.6 var(--f-display); font-style: normal; transition: height .5s; }
+  /* guess mode */
+  .gm { display: grid; gap: 16px; justify-items: center; text-align: center; }
+  .gm .bot { font: 800 clamp(70px, 12vw, 140px)/1 var(--f-display); background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .gm .row3 { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .gm .row3 .btn { font-size: 24px; padding: 18px 26px; }
+  @media (max-width: 960px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="floaters" id="floaters" aria-hidden="true"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<div class="lab">
+  <header class="lhead">
+    <h1 class="title wave" style="font-size:clamp(34px,4.4vw,56px)"><span class="c1">B</span><span class="c2">i</span><span class="c3">n</span><span class="c4">a</span><span class="c5">r</span><span class="c1">y</span> <span class="c2">L</span><span class="c3">a</span><span class="c4">b</span></h1>
+    <div class="tabs" role="tablist">
+      <button class="on" data-tab="search" role="tab">🔍 Step-by-step search</button>
+      <button data-tab="guess" role="tab">🤖 I'll guess your number</button>
+    </div>
+  </header>
+
+  <!-- SEARCH MODE -->
+  <section id="tab-search" class="panel2">
+    <div class="ctrls">
+      <label for="data">List</label>
+      <select id="data">
+        <option value="nums">Numbers (10)</option>
+        <option value="names">Names (7)</option>
+        <option value="big">Random sorted (31)</option>
+        <option value="custom">My own list…</option>
+      </select>
+      <input id="custom" type="text" placeholder="Type values, e.g. 4, 9, 15, 22, 30" hidden aria-label="Your own list">
+      <label for="key">Key</label>
+      <input id="key" type="text" value="8" aria-label="Key to search for" autocomplete="off">
+      <button class="btn small go" id="step">Step ▶</button>
+      <button class="btn small teal" id="play">Auto play ⏵</button>
+      <button class="btn small" id="reset">Reset ↺</button>
+      <label for="speed">Speed</label><input id="speed" type="range" min="300" max="2200" value="1100" step="100" style="direction:rtl" aria-label="Speed">
+    </div>
+    <div class="say" id="say">Choose a list and a key, then press <b>Step</b>.</div>
+    <div class="grid2">
+      <div class="stage" style="display:grid;gap:14px">
+        <div class="arr" id="arr"></div>
+        <div class="stats">
+          <div><small>first</small><b id="sF">0</b></div>
+          <div><small>last</small><b id="sL">0</b></div>
+          <div><small>mid</small><b id="sM">–</b></div>
+          <div><small>repetitions</small><b id="sR">0</b></div>
+          <div class="vs"><small>Linear would need</small><b id="sLin">–</b></div>
+        </div>
+        <div><small style="font:800 12px/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--soft)">Range size after each repetition</small><div class="shrink" id="shrink"></div></div>
+        <table class="trace"><thead><tr><th>Rep</th><th>first</th><th>last</th><th>mid</th><th>myList[mid]</th><th>Decision</th></tr></thead><tbody id="trace"></tbody></table>
+      </div>
+      <div class="code ro" id="code"></div>
+    </div>
+  </section>
+
+  <!-- GUESS MODE -->
+  <section id="tab-guess" class="panel2" hidden>
+    <div class="gm">
+      <p class="lede" id="gIntro">Think of a whole number from <b>1</b> to <b>100</b>. Don’t tell me! I will find it in <b>7 guesses or fewer</b>.</p>
+      <div class="ctrls" style="justify-content:center"><button class="btn go" id="gStart">I’m ready, start guessing!</button></div>
+      <div id="gPlay" hidden style="display:grid;gap:16px;justify-items:center;width:100%">
+        <small class="pill" id="gCount">Guess 1</small>
+        <div class="bot" id="gNum">50</div>
+        <div class="gbar" style="width:min(720px,100%)"><div class="gwin" id="gWin"></div></div><div class="gcap" id="gCap"></div>
+        <div class="row3"><button class="btn pink" id="gLower">Lower ⬇</button><button class="btn teal" id="gRight">Correct! ✓</button><button class="btn go" id="gHigher">Higher ⬆</button></div>
+        <div class="ghist" id="gHist"></div>
+        <p class="lede" id="gMsg"></p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script src="fx.js"></script>
+<script>
+(function () {
+  'use strict';
+  floaters(['first', 'mid', 'last', '½', '//2', 'sorted', '<=', '?']);
+  /* ---------- tabs ---------- */
+  $$('.tabs button').forEach((b) => b.onclick = () => {
+    $$('.tabs button').forEach((x) => x.classList.toggle('on', x === b));
+    $('#tab-search').hidden = b.dataset.tab !== 'search';
+    $('#tab-guess').hidden = b.dataset.tab !== 'guess';
+    stopAuto();
+  });
+
+  /* ---------- data ---------- */
+  const NUMS = [2, 3, 5, 8, 13, 21, 32, 47, 56, 62];
+  const NAMES = ['Ahmed', 'Hana', 'Khalid', 'Lina', 'Omar', 'Sara', 'Yusuf'];
+  const big = () => { const s = new Set(); while (s.size < 31) s.add(1 + Math.floor(Math.random() * 199)); return [...s].sort((a, b) => a - b); };
+  let list = NUMS.slice(), isText = false, bigList = big();
+  const CODE = [
+    'myList=[…sorted…]', 'key=input()', 'N=len(myList)', 'first=0', 'last=N-1', 'found=False',
+    'while first<=last and found==False:', '    mid=(first+last)//2', '    if myList[mid]==key:', '        found=True', '        pos=mid',
+    '    elif key<myList[mid]:', '        last=mid-1', '    else:', '        first=mid+1', 'if found:', '    print("Found at index",pos)', 'else:', '    print("Not in this list")'];
+  function hl(line) {
+    const re = /("[^"]*")|\b(while|and|if|elif|else)\b|\b(True|False)\b|\b(print|len|input)\b|\b(\d+)\b/g;
+    let body = '', last = 0, m;
+    while ((m = re.exec(line))) { body += esc(line.slice(last, m.index)); const c = m[1] ? 'str' : m[2] ? 'kw' : m[3] ? 'self' : m[4] ? 'fn' : 'num'; body += `<span class="${c}">${esc(m[0])}</span>`; last = m.index + m[0].length; }
+    return body + esc(line.slice(last));
+  }
+  $('#code').innerHTML = CODE.map((l, i) => `<div class="cl" data-l="${i}"><span>${i + 1}</span><span>${hl(l)}</span></div>`).join('');
+  const lit = (...ls) => $$('#code .cl').forEach((c) => c.classList.toggle('now', ls.includes(+c.dataset.l)));
+
+  /* ---------- search state machine ---------- */
+  let S = null, auto = null;
+  const fmt = (v) => isText ? `"${v}"` : String(v);
+  const parseKey = () => { const v = $('#key').value.trim(); return isText ? v : (v === '' || isNaN(+v) ? null : +v); };
+  function cmp(a, b) { return isText ? a.localeCompare(b, 'en', { sensitivity: 'base' }) : a - b; }
+  function drawArr() {
+    $('#arr').className = 'arr' + (isText || list.length > 16 ? ' words' : '');
+    $('#arr').innerHTML = list.map((v, i) => `<div class="atile" data-i="${i}" style="--c:${COLORS[i % COLORS.length]}"><b>${esc(v)}</b><small>[${i}]</small></div>`).join('');
+    if (list.length > 16) $$('#arr .atile').forEach((t) => { t.style.minWidth = '44px'; t.style.height = '58px'; });
+  }
+  function paint() {
+    $$('#arr .atile').forEach((t) => {
+      const i = +t.dataset.i, lab = [];
+      t.classList.toggle('out', S.first > S.last ? true : (i < S.first || i > S.last));
+      if (S.first <= S.last || S.phase === 'done') { if (i === S.first && S.first < list.length) lab.push('first'); if (i === S.last && S.last >= 0) lab.push('last'); }
+      if (S.mid != null && i === S.mid) lab.push('mid');
+      t.dataset.ptr = lab.join(' · ');
+      t.classList.toggle('midsel', S.mid === i && S.phase !== 'done');
+      t.classList.toggle('found', S.found && S.pos === i);
+    });
+    $('#sF').textContent = S.first; $('#sL').textContent = S.last; $('#sM').textContent = S.mid == null ? '–' : S.mid; $('#sR').textContent = S.reps;
+    const sizes = S.sizes, mx = sizes[0] || 1;
+    $('#shrink').innerHTML = sizes.map((s) => `<i style="height:${Math.max(14, (s / mx) * 70)}px">${s}</i>`).join('');
+  }
+  function reset() {
+    stopAuto();
+    const sel = $('#data').value;
+    $('#custom').hidden = sel !== 'custom';
+    if (sel === 'nums') { list = NUMS.slice(); isText = false; }
+    if (sel === 'names') { list = NAMES.slice(); isText = true; }
+    if (sel === 'big') { list = bigList.slice(); isText = false; }
+    if (sel === 'custom') {
+      const raw = $('#custom').value.split(',').map((s) => s.trim()).filter(Boolean);
+      isText = raw.some((v) => isNaN(+v));
+      list = isText ? raw.slice() : raw.map(Number);
+      const sortedL = list.slice().sort((a, b) => cmp(a, b));
+      if (sortedL.join() !== list.join() && list.length) toast('Binary Search needs a sorted list, so I sorted it for you', 2600);
+      list = sortedL.filter((v, i, a) => i === 0 || cmp(v, a[i - 1]) !== 0).slice(0, 40);
+      if (!list.length) list = NUMS.slice();
+    }
+    const key = parseKey();
+    S = { key, first: 0, last: list.length - 1, mid: null, reps: 0, found: false, pos: -1, phase: 'init', sizes: [list.length] };
+    drawArr(); paint(); lit(3, 4, 5);
+    $('#trace').innerHTML = '';
+    const li = key == null ? -1 : list.findIndex((v) => cmp(v, key) === 0);
+    $('#sLin').textContent = key == null ? '–' : (li >= 0 ? li + 1 : list.length);
+    say(key == null ? 'Type a key to search for.' : `Searching for <b>${esc(fmt(key))}</b>. Start: first = 0, last = N - 1 = ${list.length - 1}. Press <b>Step</b>.`);
+  }
+  function say(h, cls) { const s = $('#say'); s.innerHTML = h; s.className = 'say' + (cls ? ' ' + cls : ''); }
+  function addRow(dec, hit) {
+    const tr = document.createElement('tr'); tr.className = 'newrow' + (hit ? ' hit' : '');
+    tr.innerHTML = `<td>${S.reps}</td><td>${S.rowFirst}</td><td>${S.rowLast}</td><td>${S.mid}</td><td>${esc(fmt(list[S.mid]))}</td><td>${dec}</td>`;
+    $('#trace').appendChild(tr);
+  }
+  function step() {
+    if (!S || S.key == null) { reset(); if (S.key == null) return; }
+    switch (S.phase) {
+      case 'init': case 'check':
+        lit(6);
+        if (S.first <= S.last) { say(`first (${S.first}) &lt;= last (${S.last}) and not found yet → loop again.`); S.phase = 'mid'; }
+        else { say(`first (${S.first}) &gt; last (${S.last}) → the range is empty. <b>${esc(fmt(S.key))} is not in this list.</b>`, 'lose'); S.phase = 'done'; lit(17, 18); beep('bad'); stopAuto(); }
+        break;
+      case 'mid':
+        S.reps++; S.rowFirst = S.first; S.rowLast = S.last;
+        S.mid = Math.floor((S.first + S.last) / 2); lit(7); beep('tap');
+        say(`Repetition ${S.reps}: mid = (${S.first} + ${S.last}) // 2 = <b>${S.mid}</b>. The item there is <b>${esc(fmt(list[S.mid]))}</b>.`);
+        S.phase = 'cmp'; break;
+      case 'cmp': {
+        const c = cmp(S.key, list[S.mid]);
+        if (c === 0) { S.found = true; S.pos = S.mid; lit(8, 9, 10); say(`${esc(fmt(S.key))} == ${esc(fmt(list[S.mid]))} → <b>Found at index ${S.mid}</b> after ${S.reps} repetition${S.reps > 1 ? 's' : ''}!`, 'win'); addRow('found ✓', true); S.phase = 'done'; beep('win'); confetti(160); stopAuto(); }
+        else if (c < 0) { lit(11, 12); S.last = S.mid - 1; say(`${esc(fmt(S.key))} &lt; ${esc(fmt(list[S.mid]))} → drop the right half: last = mid - 1 = <b>${S.last}</b>.`); addRow('last = mid - 1'); S.sizes.push(Math.max(0, S.last - S.first + 1)); S.phase = 'check'; S.mid = null; beep('down'); }
+        else { lit(13, 14); S.first = S.mid + 1; say(`${esc(fmt(S.key))} &gt; ${esc(fmt(list[S.mid]))} → drop the left half: first = mid + 1 = <b>${S.first}</b>.`); addRow('first = mid + 1'); S.sizes.push(Math.max(0, S.last - S.first + 1)); S.phase = 'check'; S.mid = null; beep('up'); }
+        break;
+      }
+      case 'done': toast('Search finished. Press Reset or type a new key.'); return;
+    }
+    paint();
+  }
+  function stopAuto() { clearInterval(auto); auto = null; const p = $('#play'); if (p) p.textContent = 'Auto play ⏵'; }
+  $('#step').onclick = () => { stopAuto(); step(); };
+  $('#play').onclick = () => {
+    if (auto) { stopAuto(); return; }
+    if (!S || S.phase === 'done') reset();
+    $('#play').textContent = 'Pause ⏸'; step();
+    auto = setInterval(step, +$('#speed').value);
+  };
+  $('#speed').oninput = () => { if (auto) { clearInterval(auto); auto = setInterval(step, +$('#speed').value); } };
+  $('#reset').onclick = reset;
+  $('#data').onchange = () => {
+    const v = $('#data').value;
+    if (v === 'names') $('#key').value = 'Sara';
+    if (v === 'nums') $('#key').value = '8';
+    if (v === 'big') { bigList = big(); $('#key').value = String(bigList[Math.floor(Math.random() * bigList.length)]); }
+    if (v === 'custom') { $('#custom').hidden = false; $('#custom').focus(); }
+    reset();
+  };
+  $('#custom').onchange = reset;
+  $('#key').oninput = () => { clearTimeout(window.__k); window.__k = setTimeout(reset, 350); };
+  document.addEventListener('keydown', (e) => { if (e.target.matches('input, select')) return; if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); $('#step').click(); } });
+  reset();
+
+  /* ---------- guess mode: the computer halves the range ---------- */
+  let g = null;
+  const gPaint = () => {
+    $('#gNum').textContent = g.guess; $('#gCount').textContent = 'Guess ' + g.n;
+    $('#gCap').innerHTML = `Still possible: <b>${g.lo} – ${g.hi}</b> · ${g.hi - g.lo + 1} number${g.hi === g.lo ? '' : 's'}`;
+    $('#gWin').style.left = ((g.lo - 1) / 100 * 100) + '%'; $('#gWin').style.width = ((g.hi - g.lo + 1) / 100 * 100) + '%';
+    $('#gHist').innerHTML = g.hist.map((h) => `<span class="${h.d}">${h.v}${h.d === 'up' ? ' ↑' : h.d === 'down' ? ' ↓' : ' ✓'}</span>`).join('');
+    $('#gNum').animate([{ transform: 'scale(.6) rotateX(80deg)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 450, easing: 'cubic-bezier(.2,1.4,.4,1)' });
+  };
+  const next = () => { g.guess = Math.floor((g.lo + g.hi) / 2); g.n++; $('#gMsg').innerHTML = `Range ${g.lo}–${g.hi} has ${g.hi - g.lo + 1} numbers. Middle: (${g.lo} + ${g.hi}) // 2 = <b>${g.guess}</b>.`; gPaint(); };
+  $('#gStart').onclick = () => { g = { lo: 1, hi: 100, n: 0, hist: [] }; $('#gPlay').hidden = false; $('#gStart').textContent = 'Start again'; [$('#gLower'), $('#gHigher'), $('#gRight')].forEach((b) => b.disabled = false); beep('go'); next(); };
+  $('#gLower').onclick = () => { g.hist.push({ v: g.guess, d: 'down' }); g.hi = g.guess - 1; beep('down'); if (g.lo > g.hi) return cheat(); next(); };
+  $('#gHigher').onclick = () => { g.hist.push({ v: g.guess, d: 'up' }); g.lo = g.guess + 1; beep('up'); if (g.lo > g.hi) return cheat(); next(); };
+  $('#gRight').onclick = () => { g.hist.push({ v: g.guess, d: 'hit' }); gPaint(); $('#gMsg').innerHTML = `Got it in <b>${g.n}</b> guess${g.n > 1 ? 'es' : ''}! Halving means 7 guesses are always enough for 100 numbers.`; beep('win'); confetti(220); [$('#gLower'), $('#gHigher'), $('#gRight')].forEach((b) => b.disabled = true); };
+  function cheat() { gPaint(); $('#gMsg').innerHTML = `first passed last: no numbers are left! Did someone give a wrong hint? 😄`; beep('bad'); [$('#gLower'), $('#gHigher'), $('#gRight')].forEach((b) => b.disabled = true); }
+})();
+</script>
+</body>
+</html>
